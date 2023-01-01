@@ -1,0 +1,393 @@
+<div class="app-content">
+    <div class="app-title">
+        <div class="">
+            <h1>
+                <i aria-hidden="true" class="fa fa-bus"></i>
+                Routes
+            </h1>
+        </div>
+        <!--    <ul class="app-breadcrumb breadcrumb">-->
+        <!--      <xng-breadcrumb></xng-breadcrumb>-->
+        <!--    </ul>-->
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <div class="main-wrapper">
+                <div class="tile">
+                    <div class="tile-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-3">
+                                <label>Search by Source</label>
+                                <input
+                                        (ngModelChange)="getAllRouteConfigs()"
+                                        [(ngModel)]="queryObj.sourcecity"
+                                        class="form-control form-control-sm"
+                                        placeholder="search"
+                                        type="text"
+                                />
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Search by Destination</label>
+                                <input
+                                        (ngModelChange)="getAllRouteConfigs()"
+                                        [(ngModel)]="queryObj.destinationcity"
+                                        class="form-control form-control-sm"
+                                        placeholder="search"
+                                        type="text"
+                                />
+                            </div>
+                            <div class="col-sm-2 mt-auto">
+                                <div class="form-check">
+                                    <input
+                                            (ngModelChange)="getAllRouteConfigs()"
+                                            [(ngModel)]="queryObj.skipcalculate"
+                                            class="form-check-input"
+                                            id="flexCheckDefault"
+                                            type="checkbox"
+                                            value=""
+                                    />
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        DO NOT RECALCULATE ME
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 text-end mt-auto">
+                                <button
+                                        (click)="addRoute(addRouteModal)"
+                                        class="btn btn-primary btn-sm"
+                                >
+                                    Add Route
+                                </button>
+                                <button
+                                        (click)="refreshData()"
+                                        class="btn btn-success btn-sm ms-1"
+                                >
+                                    Refresh Data
+                                </button>
+                            </div>
+                        </div>
+                        <div
+                                [ngStyle]="
+                routesData.length >= 50
+                  ? { height: '700px' }
+                  : { height: '100%' }
+              "
+                                class="table-responsive"
+                                style="overflow-x: auto"
+                        >
+                            <table class="table table-bordered table-hover text-center">
+                                <thead>
+                                <tr>
+                                    <th>S No</th>
+                                    <th>Source</th>
+                                    <th>Destination</th>
+                                    <th>Slab</th>
+                                    <th>Distance</th>
+                                    <th>Non AC Seater</th>
+                                    <th>AC Seater</th>
+                                    <th>Non AC Sleeper</th>
+                                    <th>AC Sleeper</th>
+                                    <th>Multi Seater</th>
+                                    <th>Multi Sleeper</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let route of routesData; let i = index">
+                                    <td>{{ (queryObj.page - 1) * queryObj.size + i + 1 }}</td>
+                                    <td>{{ route.sourcecity }}</td>
+                                    <td>{{ route.destinationcity }}</td>
+                                    <td>{{ route.slab }}</td>
+                                    <td>{{ route.distance }}</td>
+                                    <td>{{ route.NON_AC_SEATER || '--' }}</td>
+                                    <td>{{ route.AC_SEATER || '--' }}</td>
+                                    <td>{{ route.NON_AC_SLEEPER || '--' }}</td>
+                                    <td>{{ route.AC_SLEEPER || '--' }}</td>
+                                    <td>{{ route.MULTI_SEATER || '--' }}</td>
+                                    <td>{{ route.MULTI_SLEEPER || '--' }}</td>
+                                    <td>
+                                        <a (click)="editRouteConfig(route, editRouteModal)" class="btn btn-sm">
+                                            <i class="fa fa-edit"></i
+                                            ></a>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="routesData.length === 0">
+                                    <td colspan="12" style="text-align: center">
+                                        No Records exist.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="routesData.length !== 0" class="row mt-4">
+                            <div class="col-sm-6" style="color: #393b3f; font-size: 14px">
+                                <ngb-pagination
+                                        (pageChange)="changePage($event)"
+                                        *ngIf="totalCount || !totalCount === 0"
+                                        [(page)]="queryObj.page"
+                                        [boundaryLinks]="true"
+                                        [collectionSize]="totalCount"
+                                        [maxSize]="8"
+                                        [pageSize]="queryObj.size"
+                                >
+                                </ngb-pagination>
+                            </div>
+                            <div class="col-sm-6">
+                                <ul
+                                        *ngIf="totalCount || !totalCount === 0"
+                                        class="pagination pull-right"
+                                >
+                                    <li
+                                            (click)="handlePageSizeChange(size)"
+                                            *ngFor="let size of queryObj.pageSizes"
+                                            [ngClass]="size === queryObj.size ? 'active' : ''"
+                                            class="page-item"
+                                    >
+                                        <button class="page-link">
+                                            {{ size }}
+                                            <span class="sr-only">(current)</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #addRouteModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Add Route</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="mb-3 col-sm-6">
+                        <label for="source">Source City<span class="text-danger">*</span></label>
+                        <input
+                                [(ngModel)]="addRouteObj.sourcecity"
+                                aria-describedby="emailHelp"
+                                class="form-control form-control-sm"
+                                id="source"
+                                placeholder="Enter Source City"
+                                type="text" [disabled]="skipcalculate"
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <label for="destination"
+                        >Destination City<span class="text-danger">*</span></label>
+                        <input
+                                [(ngModel)]="addRouteObj.destinationcity"
+                                aria-describedby="emailHelp"
+                                class="form-control form-control-sm"
+                                id="destination"
+                                placeholder="Enter Destination City"
+                                type="text" [disabled]="skipcalculate"
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <label for="distance1">Distance<span class="text-danger">*</span></label>
+                        <input
+                                [(ngModel)]="addRouteObj.distance"
+                                aria-describedby="emailHelp"
+                                class="form-control form-control-sm"
+                                id="distance1"
+                                placeholder="Enter Distance"
+                                type="number"
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <label for="slab-1">Select Slab<span class="text-danger">*</span></label>
+                        <select
+                                [(ngModel)]="addRouteObj.slab"
+                                class="form-select form-select-sm"
+                                id="slab-1">
+                            <option selected value="">Select Slab</option>
+                            <option *ngFor="let slab of slabs" value="{{ slab }}">
+                                {{ slab }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div *ngIf="errors.length" class="mb-3">
+                    <span *ngFor="let error of errors" class="text-danger">{{error}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button
+                (click)="c('Close click')"
+                class="btn btn-danger btn-sm"
+                type="button"
+        >
+            Close
+        </button>
+        <button (click)="saveRoute()" class="btn btn-success btn-sm" type="button">
+            Add
+        </button>
+    </div>
+</ng-template>
+
+<!--Edit Route Modal-->
+<ng-template #editRouteModal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Route</h4>
+        <!-- <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="mb-3 col-sm-6">
+                        <label for="sourceCity">Source City<span class="text-danger">*</span></label>
+                        <input
+                                [(ngModel)]="updateRouteObj.sourcecity"
+                                aria-describedby="emailHelp"
+                                class="form-control form-control-sm"
+                                id="sourceCity"
+                                placeholder="Enter Source City"
+                                type="text" disabled
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <label for="destinationCity"
+                        >Destination City<span class="text-danger">*</span></label>
+                        <input
+                                [(ngModel)]="updateRouteObj.destinationcity"
+                                aria-describedby="emailHelp"
+                                class="form-control form-control-sm"
+                                id="destinationCity"
+                                placeholder="Enter Destination City"
+                                type="text" disabled
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <label for="distance"
+                        >Distance<span class="text-danger">*</span></label
+                        >
+                        <input
+                                [(ngModel)]="updateRouteObj.distance"
+                                aria-describedby="emailHelp"
+                                class="form-control form-control-sm"
+                                id="distance"
+                                placeholder="Enter Distance"
+                                type="number"
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <label>Select Slab<span class="text-danger">*</span></label>
+                        <select
+                                [(ngModel)]="updateRouteObj.slab"
+                                class="form-select form-select-sm"
+                                id="slab-l">
+                            <option selected value="">Select Slab</option>
+                            <option *ngFor="let slab of slabs" value="{{ slab }}">
+                                {{ slab }}
+                            </option>
+                        </select>
+                    </div>
+                    <div *ngIf="updateRouteObj.skipcalculate" class="mb-3 col-sm-6">
+                        <label for="nacseater">Non AC Seater<span class="text-danger">*</span></label>
+                        <input [(ngModel)]="updateRouteObj.NON_AC_SEATER"
+                               aria-describedby="emailHelp"
+                               class="form-control form-control-sm"
+                               id="nacseater"
+                               placeholder="Enter Non AC Seater Price"
+                               type="number"
+                        />
+                    </div>
+                    <div *ngIf="updateRouteObj.skipcalculate" class="mb-3 col-sm-6">
+                        <label for="acseater">AC Seater<span class="text-danger">*</span></label>
+                        <input [(ngModel)]="updateRouteObj.AC_SEATER"
+                               aria-describedby="emailHelp"
+                               class="form-control form-control-sm"
+                               id="acseater"
+                               placeholder="Enter AC Seater Price"
+                               type="number"
+                        />
+                    </div>
+                    <div *ngIf="updateRouteObj.skipcalculate" class="mb-3 col-sm-6">
+                        <label for="nacsleeper">Non AC Sleeper<span class="text-danger">*</span></label>
+                        <input [(ngModel)]="updateRouteObj.NON_AC_SLEEPER"
+                               aria-describedby="emailHelp"
+                               class="form-control form-control-sm"
+                               id="nacsleeper"
+                               placeholder="Enter Non AC Sleeper Price"
+                               type="number"
+                        />
+                    </div>
+                    <div *ngIf="updateRouteObj.skipcalculate" class="mb-3 col-sm-6">
+                        <label for="acsleeper">AC Sleeper<span class="text-danger">*</span></label>
+                        <input [(ngModel)]="updateRouteObj.AC_SLEEPER"
+                               aria-describedby="emailHelp"
+                               class="form-control form-control-sm"
+                               id="acsleeper"
+                               placeholder="Enter AC Sleeper Price"
+                               type="number"
+                        />
+                    </div>
+                    <div *ngIf="updateRouteObj.skipcalculate" class="mb-3 col-sm-6">
+                        <label for="multiseater">Multiseater<span class="text-danger">*</span></label>
+                        <input [(ngModel)]="updateRouteObj.MULTI_SEATER"
+                               aria-describedby="emailHelp"
+                               class="form-control form-control-sm"
+                               id="multiseater"
+                               placeholder="Enter Multi seater Price"
+                               type="number"
+                        />
+                    </div>
+                    <div *ngIf="updateRouteObj.skipcalculate" class="mb-3 col-sm-6">
+                        <label for="multisleeper">Multisleeper<span class="text-danger">*</span></label>
+                        <input [(ngModel)]="updateRouteObj.MULTI_SLEEPER"
+                               aria-describedby="emailHelp"
+                               class="form-control form-control-sm"
+                               id="multisleeper"
+                               placeholder="Enter Multi-Sleeper Price"
+                               type="number"
+                        />
+                    </div>
+                    <div class="mb-3 col-sm-6">
+                        <div class="form-check">
+                            <input
+                                    [(ngModel)]="updateRouteObj.skipcalculate"
+                                    class="form-check-input"
+                                    id="flexCheckDefault1"
+                                    type="checkbox"
+                                    value=""
+                            />
+                            <label class="form-check-label" for="flexCheckDefault1">
+                                DO NOT RECALCULATE ME
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="errors.length" class="mb-3">
+                 <span *ngFor="let error of errors" class="text-danger">{{error}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button
+                (click)="c('Close click')"
+                class="btn btn-danger btn-sm"
+                type="button"
+        >
+            Close
+        </button>
+        <button (click)="updateRoute()" class="btn btn-success btn-sm" type="button">
+            Update Route
+        </button>
+    </div>
+</ng-template>

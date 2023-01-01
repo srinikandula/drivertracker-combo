@@ -1,0 +1,120 @@
+<div>
+  <header class="app-header">
+    <a class="app-header__logo">
+      <img
+        src="assets/images/logo.png"
+        style="width: auto; height: 40px"
+        alt="Logo"
+      />
+    </a>
+    <a
+      class="app-sidebar__toggle onClick waves-effect waves-light"
+      data-toggle="sidebar"
+      aria-label="Hide Sidebar"
+    >
+      <i class="fa fa-bars" aria-hidden="true" style="padding-top: 14px"></i>
+    </a>
+    <ul class="app-nav">
+      <!--      <li class="app-search">-->
+      <!--        <input class="app-search__input" type="search" placeholder="Search"/>-->
+      <!--        <button class="app-search__button"><i class="fa fa-search"></i></button>-->
+      <!--      </li>-->
+      <!--      <li class="app-search">-->
+      <!--        <label class="cash-balance">Cash-->
+      <!--          Balances: </label>-->
+      <!--      </li>-->
+      <!--      <li class="app-search">-->
+      <!--        <label class="cash-balance"><i class="fa fa-calendar"></i></label>-->
+      <!--      </li>-->
+      <!--Notification Menu-->
+      <!--      <li class="dropdown">-->
+      <!--        <a class="app-nav__item waves-effect waves-light" href="" data-toggle="dropdown"-->
+      <!--           aria-label="Show notifications">-->
+      <!--          <i class="fa fa-bell-o fa-lg"></i>-->
+      <!--        </a>-->
+      <!--      </li>-->
+      <!-- User Menu-->
+      <li class="dropdown logOut-dropdown">
+        <a class="app-nav__item waves-effect app-nav__img waves-light" href=""
+           data-toggle="dropdown" aria-label="Open Profile Menu" style="padding: 0;">
+          <div class="logOut-nav">
+            <div class="app-nav__user-name user-logOut-title m-auto">
+              <p class="mb-0"><b>{{username}}</b></p>
+              <!--              <p class="mb-0"><b><small>{{getUserRoleValue(currentUser.role)}}</small></b></p>-->
+            </div>
+            <img class="app-nav__user-avatar user-logOut-icon" src="assets/images/user-icon-placeholder.png"
+                 alt="User Image">
+          </div>
+        </a>
+        <ul class="dropdown-menu settings-menu dropdown-menu-right">
+          <!--<li style="display: none"><a class="dropdown-item" href=""><i class="fa fa-cog fa-lg"></i> Settings</a>
+          </li>
+          <li><a class="dropdown-item waves-effect waves-black"><i class="fa fa-user fa-lg"></i> Profile</a>
+          </li>-->
+          <li><a class="dropdown-item waves-effect waves-red" (click)="logOut()"
+                 style="cursor: pointer"><i class="fa fa-sign-out fa-lg"></i> Logout</a></li>
+        </ul>
+      </li>
+    </ul>
+  </header>
+
+  <aside class="app-sidebar">
+    <!--    <div class="app-sidebar__user" title="{{currentUser.fullName}}">-->
+    <!--      <img class="app-sidebar__user-avatar" src="assets/images/user-icon-placeholder.png" alt="User Image">-->
+    <!--      <div>-->
+    <!--        <p class="app-sidebar__user-name">{{currentUser.userName | uppercase}}</p>-->
+    <!--        <p class="app-sidebar__user-designation">-->
+    <!--          <small class="app-sidebar__user-designation">{{getUserRoleValue(currentUser.role)}}</small>-->
+    <!--        </p>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <ul class="app-menu" id="dashboard-main-menu">
+      <li class="treeView">
+        <a
+          class="app-menu__item"
+          href=""
+          [routerLink]="['layout/fareList']"
+          [routerLinkActive]="['active']"
+        >
+          <i class="fa fa-bus fa-lg"></i>
+          <span class="app-menu__label">Route</span>
+        </a>
+      </li>
+      <!--      <li class="treeView">-->
+      <!--        <a class="app-menu__item" href="" [routerLink]="['layout/fareConfig']" [routerLinkActive]="['active']">-->
+      <!--          <i class="fa fa-cog fa-lg"></i>-->
+      <!--          <span class="app-menu__label">Fare Config</span>-->
+      <!--        </a>-->
+      <!--      </li>-->
+      <li class="treeView">
+        <a
+          class="app-menu__item"
+          href=""
+          [routerLink]="['layout/slab']"
+          [routerLinkActive]="['active']"
+        >
+          <i class="fa fa-hashtag fa-lg"></i>
+          <span class="app-menu__label">Slabs</span>
+        </a>
+      </li>
+      <li class="treeView">
+        <a
+          class="app-menu__item"
+          href=""
+          [routerLink]="['layout/logs']"
+          [routerLinkActive]="['active']"
+        >
+          <i class="fa fa-chevron-circle-right fa-lg"></i>
+          <span class="app-menu__label">Logs</span>
+        </a>
+      </li>
+      <li class="treeView">
+        <a class="app-menu__item" href="" (click)="logOut()">
+          <i class="fa fa-chevron-circle-right fa-lg"></i>
+          <span class="app-menu__label">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+  <router-outlet></router-outlet>
+</div>

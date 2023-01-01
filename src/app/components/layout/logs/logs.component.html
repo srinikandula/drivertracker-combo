@@ -1,0 +1,101 @@
+<div class="app-content">
+  <div class="app-title">
+    <div class="">
+      <h1>
+        <i class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+        Logs
+      </h1>
+    </div>
+    <!--    <ul class="app-breadcrumb breadcrumb">-->
+    <!--      <xng-breadcrumb></xng-breadcrumb>-->
+    <!--    </ul>-->
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12">
+      <div class="main-wrapper">
+        <div class="tile">
+          <div class="tile-body">
+            <div class="row mb-3">
+              <div class="col-sm-3">
+                <label>Search by Type</label>
+                <input
+                  type="text"
+                  placeholder="search"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="queryObj.search"
+                  (ngModelChange)="getAllLogs()"
+                />
+              </div>
+            </div>
+            <div
+              class="table-responsive"
+              style="overflow-x: auto"
+              [ngStyle]="
+                logsData.length >= 50 ? { height: '700px' } : { height: '100%' }
+              "
+            >
+              <table class="table table-bordered table-hover text-center">
+                <thead>
+                  <tr>
+                    <th>S No</th>
+                    <th>Username</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let log of logsData; let i = index">
+                    <td>{{ (queryObj.page - 1) * queryObj.size + i + 1 }}</td>
+                    <td>{{ log.username }}</td>
+                    <td>{{ log.message }}</td>
+                    <td>
+                      {{ log.Date | date }} {{ log.Date | date : 'shortTime' }}
+                    </td>
+                  </tr>
+                  <tr *ngIf="logsData.length === 0">
+                    <td colspan="4" style="text-align: center">
+                      No Records exist.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row mt-4" *ngIf="logsData.length !== 0">
+              <div class="col-sm-6" style="color: #393b3f; font-size: 14px">
+                <ngb-pagination
+                  *ngIf="totalCount || !totalCount === 0"
+                  [(page)]="queryObj.page"
+                  [pageSize]="queryObj.size"
+                  [collectionSize]="totalCount"
+                  [boundaryLinks]="true"
+                  (pageChange)="changePage($event)"
+                  [maxSize]="8"
+                >
+                </ngb-pagination>
+              </div>
+              <div class="col-sm-6">
+                <ul
+                  class="pagination pull-right"
+                  *ngIf="totalCount || !totalCount === 0"
+                >
+                  <li
+                    class="page-item"
+                    [ngClass]="size === queryObj.size ? 'active' : ''"
+                    *ngFor="let size of queryObj.pageSizes"
+                    (click)="handlePageSizeChange(size)"
+                  >
+                    <button class="page-link">
+                      {{ size }}
+                      <span class="sr-only">(current)</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
