@@ -20,8 +20,9 @@ async function findUserByPhoneNumber(phoneNumber, next){
       next({status: 400, message: 'Phone Number does not exist..!'})
     }else{
       const randomNum = Math.floor(100000 + Math.random() * 900000);
-      await OtpColl.deleteMany({contactNumber: phoneNumber});
-      const result = await OtpColl.create({contactNumber: phoneNumber, loginOtp: randomNum});
+      let expiresOn = new Date();
+      expiresOn.setMinutes(expiresOn.getMinutes() + 10);
+      const result = await OtpColl.create({contactNumber: phoneNumber, loginOtp: randomNum, active:true, expiresOn: expiresOn});
       if (!result) {
         next({status: 400, message: 'Error in sending OPT..!'})
       }else{

@@ -9,8 +9,7 @@ const router = express.Router();
 module.exports = router;
 
 router.post(
-  '/login',
-  passport.authenticate('local', {session: false}),
+  '/login', passport.authenticate('local', {session: false}),
   login
 );
 

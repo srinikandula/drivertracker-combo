@@ -45,18 +45,19 @@ const otpLogin = new LocalStrategy(
     passwordField: 'loginOtp'
   },
   async (contactNumber, loginOtp, done) => {
-    let user = await OTPColl.findOne({  contactNumber });
-    if (!user) {
-      done({
-        status: 400,
-        message: 'Username does not exist..!',
-      });
-    } else {
+    let userOtp = await OTPColl.findOne({  "contactNumber":contactNumber,"loginOtp":loginOtp });
+    if (!userOtp || !userOtp.active) {
+      done({status: 400, message: 'Incorrect OTP!'});
+    } if (userOtp.expiresOn.getMilliseconds() < new Date().getMilliseconds()) {
+      done({status: 400, message: 'OTP expired!'});
+    }  else {
       try {
-        if (loginOtp === user.loginOtp) {
-          user = user.toObject();
-          delete user.loginOtp;
-          done(null, user);
+        if (loginOtp === userOtp.loginOtp) {
+          userOtp = userOtp.toObject();
+          let updateResult = await OTPColl.updateMany({  contactNumber:contactNumber,"active":true },{"active":false});
+          console.log("update result "+ updateResult);
+          delete userOtp.loginOtp;
+          done(null, userOtp);
         } else {
           done({ status: 400, message: 'OTP is Wrong..!' });
         }
