@@ -2,8 +2,8 @@ var fs = require('fs');
 function getUserHome() {
   return process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'];
 }
-var serverConfigPath = getUserHome() + '/busfareportal-config.json';
-var projectConfigPath = __dirname + '/busfareportal-config.json';
+var serverConfigPath = getUserHome() + '/drivertracker-config.json';
+var projectConfigPath = __dirname + '/drivertracker-config.json';
 
 if (process.env.NODE_ENV === 'test') {
   projectConfigPath = __dirname + '/test_config.json';

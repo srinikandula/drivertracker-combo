@@ -34,6 +34,7 @@ export class LoginComponent implements OnInit {
   }
 
   // convenience getter for easy access to form fields
+  public isOTP: boolean = false;
   get f() {
     return this.loginForm.controls;
   }
@@ -48,7 +49,7 @@ export class LoginComponent implements OnInit {
           Validators.pattern(/^\d{10}$/),
         ],
       ],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      loginOTP: ['', [Validators.required, Validators.minLength(6), Validators.pattern(/^\d{6}$/)]],
     });
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/';
@@ -66,7 +67,7 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
     this.authService
-      .logIn(this.f.phoneNumber.value, this.f.password.value)
+      .logIn(this.f.phoneNumber.value, this.f.loginOTP.value)
       .pipe(first())
       .subscribe(
         (data: any) => {
@@ -80,5 +81,17 @@ export class LoginComponent implements OnInit {
           this.submitted = true;
         }
       );
+  }
+
+  sendOtp() {
+    if (this.f.phoneNumber.value) {
+      this.apiService.get(this.apiUrls.sendOtp + this.f.phoneNumber.value).subscribe((res: any) => {
+        if (res) {
+          this.isOTP = true;
+        }
+      }, error => {
+        this.error = error.message;
+      })
+    }
   }
 }

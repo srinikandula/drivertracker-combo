@@ -22,7 +22,7 @@ if (config.env === 'development') {
 
 // Choose what fronten framework to serve the dist from
 var distDir = '../../dist/';
-if (config.frontend == 'react') {
+if (config.frontend === 'react') {
   distDir = '../../node_modules/material-dashboard-react/dist';
 } else {
   distDir = '../../dist/';
