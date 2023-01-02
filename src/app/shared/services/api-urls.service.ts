@@ -5,7 +5,8 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class ApiUrlsService {
-  mainUrl = environment.testPath;
+  // mainUrl = environment.testPath;
+  mainUrl = "http://localhost:5030";
 
   getCurrentUser = 'api/v1/user/me';
   getAllRoutes = '/api/v1/fareconfig/getFareList';
@@ -17,4 +18,7 @@ export class ApiUrlsService {
   saveSlab = '/api/v1/rateConfig/addRateConfig';
   updateSlab = '/api/v1/rateConfig/updateRateConfig/';
   getAllLogs = '/api/v1/logs/getAll';
+
+  //find mobile number and send OTP
+  sendOtp = '/api/v1/auth/sendOTP/'
 }

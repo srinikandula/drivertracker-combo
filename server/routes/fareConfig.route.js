@@ -4,6 +4,8 @@ const passport = require('passport');
 
 const router = express.Router();
 
+router.use(passport.authenticate('jwt', { session: false }));
+
 router.route('/getFareList').post(function (req, res) {
     fareConfigController
         .getFareList(req.body, result => {

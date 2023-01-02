@@ -4,13 +4,15 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const bcrypt = require('bcrypt');
 
-const User = require('../models/user.model');
+const OTPColl = require('../models/otp.model');
 const config = require('./config');
 
 const localLogin = new LocalStrategy(
-  { usernameField: 'phonenumber' },
+  {
+    usernameField: 'phonenumber',
+    passwordField: 'password'
+  },
   async (phonenumber, password, done) => {
-    let number = parseInt(phonenumber, 10);
     let user = await User.findOne({ phonenumber: number });
     console.log('===> ', user);
     if (!user) {
@@ -35,22 +37,54 @@ const localLogin = new LocalStrategy(
   }
 );
 
+// Otp Strategy
+
+const otpLogin = new LocalStrategy(
+  {
+    usernameField: 'contactNumber',
+    passwordField: 'loginOtp'
+  },
+  async (contactNumber, loginOtp, done) => {
+    let user = await OTPColl.findOne({  contactNumber });
+    if (!user) {
+      done({
+        status: 400,
+        message: 'Username does not exist..!',
+      });
+    } else {
+      try {
+        if (loginOtp === user.loginOtp) {
+          user = user.toObject();
+          delete user.loginOtp;
+          done(null, user);
+        } else {
+          done({ status: 400, message: 'OTP is Wrong..!' });
+        }
+      } catch (e) {
+        // console.log(e, "==>", user);
+        return done(e);
+      }
+    }
+  }
+);
+
 const jwtLogin = new JwtStrategy(
   {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: config.jwtSecret,
   },
   async (payload, done) => {
-    let user = await User.findById(payload._id);
+    let user = await OTPColl.findById(payload._id);
     if (!user) {
       return done(null, false);
     }
     user = user.toObject();
-    delete user.hashedPassword;
+    delete user.loginOtp;
     done(null, user);
   }
 );
 passport.use(jwtLogin);
 passport.use(localLogin);
+passport.use('otp', otpLogin);
 
 module.exports = passport;

@@ -5,110 +5,72 @@
       <div class="modal-dialog w-100 mx-auto">
         <div class="modal-content">
           <div class="modal-body">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" id="form1">
+            <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" id="form1">
               <div class="h5 modal-title text-center">
                 <h4 class="mt-2">
-                  Welcome back, Please sign in to your account below.
+                  Welcome back, Please sign in to your account with OTP.
                 </h4>
               </div>
               <div class="form-group mb-3">
                 <input
-                  type="tel"
-                  class="form-control"
-                  minlength="10"
-                  maxlength="10"
-                  placeholder="Mobile Number"
-                  formControlName="phoneNumber"
                   [ngClass]="{
                     'is-invalid': submitted && f.phoneNumber.errors
                   }"
-                />
-                <div
-                  class="mt-1"
-                  *ngIf="
-                    (f.phoneNumber.invalid &&
-                      (f.phoneNumber.touched || f.phoneNumber.dirty)) ||
-                    submitted
-                  "
-                >
-                  <span
-                    *ngIf="f.phoneNumber.errors?.required"
-                    class="text-danger"
-                    >Number is required</span
-                  >
-                  <!--                  <span *ngIf="f.phoneNumber.errors?.minlength" class="text-danger">Number must be 10 digits</span>-->
-                  <span
-                    *ngIf="f.phoneNumber.errors?.pattern"
-                    class="text-danger"
-                    >Number must be a valid Number</span
-                  >
-                </div>
-              </div>
-              <div class="form-group mb-3">
-                <input
-                  type="password"
                   class="form-control"
-                  minlength="6"
-                  placeholder="Password"
-                  formControlName="password"
-                  [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                  formControlName="phoneNumber"
+                  maxlength="10"
+                  minlength="10"
+                  (ngModelChange)="f.phoneNumber.errors ? '' : sendOtp()"
+                  placeholder="Mobile Number"
+                  type="tel"
                 />
-                <div
-                  class="mt-1"
-                  *ngIf="
-                    (f.password.invalid &&
-                      (f.password.touched || f.password.dirty)) ||
-                    submitted
-                  "
-                >
-                  <span *ngIf="f.password.errors?.required" class="text-danger"
-                    >Password is required</span
-                  >
-                  <span *ngIf="f.password.errors?.minlength" class="text-danger"
-                    >Please Enter at least 6 characters</span
-                  >
+                <div *ngIf="(f.phoneNumber.invalid && (f.phoneNumber.touched || f.phoneNumber.dirty)) || submitted" class="mt-1" >
+                  <span  *ngIf="f.phoneNumber.errors?.required" class="text-danger">Number is required</span>
+                  <!--                  <span *ngIf="f.phoneNumber.errors?.minlength" class="text-danger">Number must be 10 digits</span>-->
+                  <span *ngIf="f.phoneNumber.errors?.pattern" class="text-danger">Number must be a valid Number</span>
                 </div>
               </div>
-              <div class="form-group ml-2 text-muted">
-                <div class="row">
-                  <!-- <div class="col"><mat-checkbox>Remember Me</mat-checkbox></div> -->
-                  <div class="col">
-                    <a class="text-right">Forgot Password/ Username</a>
-                  </div>
+              <div *ngIf="isOTP === true" class="form-group mb-3">
+                <input
+                  [ngClass]="{ 'is-invalid': submitted && f.loginOTP.errors }"
+                  class="form-control"
+                  formControlName="loginOTP"
+                  minlength="6"
+                  placeholder="enter OTP"
+                  type="text"
+                />
+                <div
+                  *ngIf="
+                    (f.loginOTP.invalid &&
+                      (f.loginOTP.touched || f.loginOTP.dirty)) ||
+                    submitted
+                  "
+                  class="mt-1"
+                >
+                  <span *ngIf="f.loginOTP.errors?.required" class="text-danger"
+                  >OTP is required</span
+                  >
+                  <span *ngIf="f.loginOTP.errors?.minlength" class="text-danger"
+                  >The OTP should be minimum 6 digits</span
+                  >
                 </div>
               </div>
 
-              <div
-                class="text-center d-none mt-4 mb-2"
-                id="error"
-                style="font-size: 16px; color: red"
-              ></div>
+              <div class="text-center">
+                <span class="text-danger">{{error}}</span>
+              </div>
+
               <button
-                type="submit"
                 class="btn text-center text-white form-control"
                 style="background-color: black"
+                type="submit"
               >
                 Login
               </button>
             </form>
           </div>
-          <!-- <div class="divider"></div> -->
-          <!-- <h6 class="mb-0">
-            No account?
-            <a [routerLink]="" class="text-primary">Sign up now</a></h6></div> -->
         </div>
-        <!-- <div class="modal-footer clearfix">
-          <div class="float-left"><a [routerLink]="" class="btn-lg btn btn-link">Recover
-            Password</a></div>
-          <div class="float-right">
-            <button type="button" class="btn btn-primary btn-lg">Login</button>
-          </div>
-        </div> -->
       </div>
-      <!-- <div class="text-center text-white opacity-8 mt-3">
-        Copyright © ArchitectUI 2019
-      </div> -->
     </div>
   </div>
-  <!-- </div> -->
 </div>

@@ -27,11 +27,11 @@ export class AuthService {
     return localStorage.getItem('loggedUser');
   }
 
-  logIn(phonenumber: string, password: string) {
+  logIn(contactNumber: string, loginOtp: string) {
     return this.http
-      .post<any>(this.apiUrls.mainUrl + '/api/v1/auth/login', {
-        phonenumber,
-        password,
+      .post<any>(this.apiUrls.mainUrl + '/api/v1/auth/otpLogin', {
+        contactNumber,
+        loginOtp,
       })
       .pipe(
         map(response => {
